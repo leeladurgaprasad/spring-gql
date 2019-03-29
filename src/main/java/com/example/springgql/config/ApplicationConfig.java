@@ -3,6 +3,9 @@ package com.example.springgql.config;
 import com.example.springgql.model.Address;
 import com.example.springgql.model.User;
 import com.example.springgql.repository.UserRepository;
+import graphql.Scalars;
+import graphql.schema.GraphQLObjectType;
+import graphql.schema.GraphQLSchema;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,4 +38,19 @@ public class ApplicationConfig {
                 .build();
         return args -> userRepository.save(user);
     }
+
+    @Bean
+    GraphQLSchema schema() {
+        return GraphQLSchema.newSchema()
+                .query(GraphQLObjectType.newObject()
+                        .name("User")
+                        .field(field -> field
+                                .name("id")
+                                .type(Scalars.GraphQLString)
+                                .dataFetcher(environment -> "response")
+                        )
+                        .build())
+                .build();
+    }
+
 }
